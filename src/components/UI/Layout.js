@@ -1,14 +1,10 @@
 import styled from "styled-components";
-import ProgressBar from "./ProgressBar";
 
 const Layout = ({ children }) => {
   return (
     <Container>
       <BrandBlock>Quizz</BrandBlock>
-      <Box>
-        <ProgressBar />
-        <MainContent>{children}</MainContent>
-      </Box>
+      <Box>{children}</Box>
     </Container>
   );
 };
@@ -24,23 +20,29 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const Box = styled.div`
+const Box = styled.main`
   background-color: #353535;
   border-radius: 15px;
   box-shadow: 0px 8px 8px 5px rgba(0, 0, 0, 0.25);
-  min-width: 30%;
-  height: 70%;
-  overflow: auto;
-`;
+  width: 30%;
+  height: 75%;
 
-const MainContent = styled.main`
-  padding: 2rem;
   display: flex;
   flex-direction: column;
+
+  overflow: hidden;
+
+  @media (max-width: 1650px) {
+    width: 50%;
+  }
+
+  @media (max-width: 1000px) {
+    width: 99%;
+  }
 `;
 
 const BrandBlock = styled.header`
-  padding: 4rem;
+  padding: 3rem;
   font-weight: 500;
   font-size: 2.5rem;
   color: #6bbc7c;

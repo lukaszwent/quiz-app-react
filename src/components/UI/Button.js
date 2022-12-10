@@ -13,10 +13,10 @@ const PrimaryButton = styled.button`
   background-color: #6bbc7c;
   color: white;
   font-weight: bold;
-  width: fit-content;
   font-size: 1.5rem;
   border-radius: 10px;
   padding: 1rem 3rem;
+  cursor: pointer;
 
   &:hover {
     background-color: gray;
