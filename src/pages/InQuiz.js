@@ -39,8 +39,6 @@ const InQuiz = () => {
 
   useEffect(() => {
     const setData = (data) => {
-      console.log(data);
-
       const fetchedQuestions = data.results.map((el) => {
         const answers = [];
 
