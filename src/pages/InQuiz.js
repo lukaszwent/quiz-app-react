@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import styled from "styled-components";
@@ -6,12 +6,14 @@ import LoadingSpinner from "../components/UI/LoadingSpinner";
 import ProgressBar from "../components/UI/ProgressBar";
 import useHttp from "../hooks/useHttp";
 
+import { CATEGORIES_LIST } from "../consts/categories";
+
 function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
 
   // While there remain elements to shuffle.
-  while (currentIndex != 0) {
+  while (currentIndex !== 0) {
     // Pick a remaining element.
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
@@ -31,7 +33,6 @@ const InQuiz = () => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({ correct: 0, wrong: 0 });
-  const [userPoints, setUserPoints] = useState(0);
   const { isLoading, error, sendRequest: fetchQuestions } = useHttp(true);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [showOverlay, setShowOverlay] = useState({ status: false, type: "" });
@@ -59,17 +60,25 @@ const InQuiz = () => {
       setQuestions(fetchedQuestions);
     };
 
+    const isRealCategory = CATEGORIES_LIST.some((el) => {
+      return el.id === parseInt(params.id);
+    });
+
+    if (!isRealCategory) {
+      navigate("/categories", { replace: true });
+    }
+
     fetchQuestions(
       { url: `https://opentdb.com/api.php?amount=10&category=${params.id}` },
       setData
     );
-  }, [fetchQuestions, params.id]);
+  }, [fetchQuestions, params.id, navigate]);
 
   useEffect(() => {
     if (questionNumber >= 10 && !showOverlay.status) {
-      navigate("/results", { state: { answers: answers, points: userPoints } });
+      navigate("/results", { state: { answers: answers } });
     }
-  }, [questionNumber, answers, navigate, showOverlay.status, userPoints]);
+  }, [questionNumber, answers, navigate, showOverlay.status]);
 
   const handleAnswer = (answer) => {
     if (answer === questions[questionNumber].correct) {
@@ -107,22 +116,23 @@ const InQuiz = () => {
     return <LoadingSpinner />;
   }
 
-  if (showOverlay.status) {
-    return (
-      <Overlay
-        style={{
-          backgroundColor:
-            showOverlay.type === "CORRECT" ? "#6bbc7c" : "#be5a5a",
-        }}
-      >
-        {showOverlay.type}
-      </Overlay>
-    );
+  if (error) {
+    return <ErrorMessage>Some error occurred</ErrorMessage>;
   }
 
   return (
-    <>
-      <ProgressBar endTime={endTime} />
+    <MainContainer>
+      {showOverlay.status ? (
+        <Overlay
+          style={{
+            backgroundColor:
+              showOverlay.type === "CORRECT" ? "#6bbc7c" : "#be5a5a",
+          }}
+        >
+          {showOverlay.type}
+        </Overlay>
+      ) : null}
+      <ProgressBar endTime={endTime} status={showOverlay.status} />
       <Container>
         <QuestionBox
           dangerouslySetInnerHTML={{
@@ -133,6 +143,7 @@ const InQuiz = () => {
           {questions[questionNumber]?.answers.map((q) => {
             return (
               <Answer
+                key={q}
                 onClick={handleAnswer.bind(this, q)}
                 dangerouslySetInnerHTML={{
                   __html: q,
@@ -142,11 +153,16 @@ const InQuiz = () => {
           })}
         </AnswersBox>
       </Container>
-    </>
+    </MainContainer>
   );
 };
 
 export default InQuiz;
+
+const ErrorMessage = styled.p`
+  color: #be5a5a;
+  font-weight: bold;
+`;
 
 const Overlay = styled.div`
   display: flex;
@@ -155,8 +171,17 @@ const Overlay = styled.div`
   font-weight: bold;
   font-size: 2rem;
   text-align: center;
-  height: 100%;
   color: white;
+  position:absolute:
+  top:0;
+  left:0;
+  width:100%;
+  height: 100%;
+`;
+
+const MainContainer = styled.div`
+  position: relative;
+  height: 100%;
 `;
 
 const Container = styled.div`

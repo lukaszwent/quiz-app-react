@@ -2,18 +2,30 @@ import React, { useEffect, useState } from "react";
 
 import styled from "styled-components";
 
-const ProgressBar = ({ endTime }) => {
+const ProgressBar = ({ endTime, status }) => {
   const [timer, setTimer] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   useEffect(() => {
-    if (timer >= 10000) {
-      endTime();
+    if (status) {
+      setTimer(0);
+      setIsTimerRunning(false);
+    } else {
+      setIsTimerRunning(true);
     }
+  }, [status, timer]);
 
-    setTimeout(() => {
-      setTimer((lastState) => lastState + 10);
-    }, 10);
-  }, [timer, endTime]);
+  useEffect(() => {
+    if (isTimerRunning) {
+      if (timer >= 10000) {
+        endTime();
+      }
+
+      setTimeout(() => {
+        setTimer((lastState) => lastState + 10);
+      }, 10);
+    }
+  }, [timer, endTime, isTimerRunning]);
 
   const percentage = (100 * timer) / 10000;
 

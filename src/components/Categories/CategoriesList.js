@@ -7,7 +7,7 @@ const CategoriesList = ({ categories }) => {
   return (
     <CategoriesWrapper>
       {categories.map((category) => {
-        return <CategoryItem {...category} />;
+        return <CategoryItem {...category} key={category.id} />;
       })}
     </CategoriesWrapper>
   );

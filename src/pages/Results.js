@@ -16,10 +16,7 @@ const Results = () => {
         </Box>
         <Box style={{ backgroundColor: "#be5a5a" }}>{state.answers.wrong}</Box>
       </AnswersBox>
-      <PointsBox>
-        <div>Total Points</div>
-        <div>{state.points}</div>
-      </PointsBox>
+
       <Button onClick={() => navigate("/categories")}>Back to menu</Button>
     </Container>
   );
@@ -46,13 +43,6 @@ const AnswersBox = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
-`;
-
-const PointsBox = styled.div`
-  color: white;
-  font-weight: bold;
-  font-size: 1.7rem;
-  text-align: center;
 `;
 
 const Container = styled.div`
